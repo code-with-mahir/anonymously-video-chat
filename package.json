@@ -1,0 +1,32 @@
+{
+    "name": "talkoye",
+    "version": "1.0.0",
+    "description": "Anonymous video and text chat platform with keyword matching, rate limiting, and monetization hooks",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "NODE_ENV=development node server.js",
+        "prod": "NODE_ENV=production node server.js"
+    },
+    "keywords": [
+        "video-chat",
+        "webrtc",
+        "socket.io",
+        "anonymous",
+        "monetization",
+        "production"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "@socket.io/redis-adapter": "^8.3.0",
+        "dotenv": "^17.4.2",
+        "express": "^4.18.2",
+        "ioredis": "^6.0.0",
+        "socket.io": "^4.5.4",
+        "socket.io-client": "^4.8.3"
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    }
+}

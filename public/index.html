@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Talkoye - Anonymous Live Video Chat with Strangers</title>
+        <link rel="stylesheet" href="css/style.css?v=1.1" />
+
+        <!-- Google Adsense -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5445276985326779"
+     crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <!-- 🛑 AGE VERIFICATION MODAL OVERLAY -->
+        <div id="ageModal" class="age-modal-overlay">
+            <div class="age-modal-content">
+                <div class="age-modal-logo">Talkoye</div>
+                <h3>Age Verification Required</h3>
+                <p>
+                    This platform connects you to random strangers globally via live video chat. You
+                    must be at least 18 years old or the age of majority in your jurisdiction to
+                    enter.
+                </p>
+
+                <div class="age-btn-container">
+                    <button class="age-btn age-btn-yes" onclick="verifyAge(true)">
+                        Yes, I'm 18+
+                    </button>
+                    <button class="age-btn age-btn-no" onclick="verifyAge(false)">
+                        No I'm not 18+, I should leave this page
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🌐 MAIN PAGE HEADER -->
+        <header class="header">
+            <div class="logo">
+                <a href="https://talkoye.onrender.com" class="logo-text">
+                    <span class="span-1">talk</span><span class="span-2">oye</span
+                    ><span class="span-3">.com</span>
+                </a>
+            </div>
+            <div class="stats">
+                <div class="pulse-dot"></div>
+                <span id="onlineCount">0</span> online
+            </div>
+        </header>
+
+        <!-- 🚀 HERO SECTION -->
+        <section class="hero-section">
+            <h2 class="hero-title">Meet Strangers Instantly via Video Chat</h2>
+            <p class="hero-subtitle">
+                Talkoye is a lightning-fast web platform that hooks you up with random people
+                worldwide. Zero logins, zero configurations. Just one click to start talking!
+            </p>
+            <!-- Replace 'chat.html' with your actual video chat page route -->
+            <a href="chat.html" class="btn-start-chat">Start Chat Now</a>
+        </section>
+
+        <!-- 📄 COMPREHENSIVE TEXT CONTENT (For Google Adsense Approval) -->
+        <main class="content-container">
+            <div class="about-card">
+                <h2>About Talkoye</h2>
+                <p>
+                    Welcome to <strong>Talkoye</strong>, a modern, highly responsive peer-to-peer
+                    web networking application designed for unmoderated instant communication. Our
+                    mission is to break borders and eliminate isolation by offering spontaneous text
+                    and webcam connections globally. Whether you are looking to learn a new
+                    language, share unique perspectives, or simply make international friends,
+                    Talkoye serves as a clean and high-fidelity chat space.
+                </p>
+                <p>
+                    Unlike traditional social media networks, Talkoye respects your digital
+                    footprint. We operate entirely on an anonymous infrastructure—requiring no
+                    signup tokens, email addresses, or phone logs, giving you complete social
+                    freedom safely.
+                </p>
+
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <strong>Instant P2P Connections</strong>
+                        <p>
+                            Leveraging high-end WebRTC protocols, we match you into secure,
+                            zero-latency direct audio-video channels.
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <strong>Zero Registry Needed</strong>
+                        <p>
+                            No passwords, no profile creation. Open the portal, complete compliance,
+                            and hit Start to connect.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-card">
+                <h2>Safety Compliance & Policy</h2>
+                <p>
+                    Talkoye strictly protects intellectual property rights and respects global ad
+                    monetization structures. We strictly comply with Google's programmatic publisher
+                    safety standards. Users found broadcasting illicit or malicious items are
+                    blocked automatically via IP ban mechanics.
+                </p>
+            </div>
+        </main>
+
+        <!-- 🔗 FOOTER AND LEGAL LINKS -->
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="index.html">talkoye.com</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+            </div>
+            <div class="copyright">
+                Created by Mahir Sohel, &copy; 2026 Talkoye. All rights reserved.
+            </div>
+        </footer>
+
+        <!-- 📜 JAVASCRIPT LOGIC -->
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script src="js/home.js"></script>
+    </body>
+</html>

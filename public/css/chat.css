@@ -1,0 +1,812 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+body {
+    font-family:
+        'Inter',
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+    background: #f0f2f5;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Main window par scrollbar block karne ke liye */
+}
+
+.header {
+    background: linear-gradient(135deg, #d6ddff 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    flex-shrink: 0; /* Header apni size par fixed rahega */
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 700;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-text {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    text-decoration: none;
+}
+
+.span-1,
+.span-3 {
+    color: #4892d3;
+}
+.span-2 {
+    color: #fb6407;
+}
+.span-3 {
+    font-size: 1.5rem;
+}
+
+.stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #2ecc71;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(46, 204, 113, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+    }
+}
+
+/* 🚀 FIX: Calc height hatakar body flex space use kiya jisse shifting nahi hogi */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    max-height: 100dvh;
+    overflow: hidden;
+    color: #ffd2d2;
+}
+
+.video-section {
+    flex: 1.3;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+    height: 60%;
+    min-height: 0; /* Flex layout collapse prevention */
+}
+
+.video-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    flex: 1;
+    min-height: 0;
+}
+
+.video-wrapper {
+    flex: 1;
+    background: #111;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-height: 45vh;
+}
+
+/* 🚀 FIX: Video call ko horizontal flip karne ke liye scaleX(-1) lagaya */
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+}
+
+.video-label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+    z-index: 5;
+    transform: scaleX(1); /* Text ko seedha rakhne ke liye */
+}
+
+.waiting-message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1a1a2e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #cbd5e0;
+    font-weight: 600;
+    font-size: 15px;
+    text-align: center;
+    padding: 10px;
+    transform: scaleX(1); /* Text mirror na ho isliye balanced */
+}
+
+.video-logo {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+    z-index: 5;
+    transform: scaleX(1); /* Text ko seedha rakhne ke liye */
+}
+
+.video-logo .logo-text {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    text-decoration: none;
+}
+
+.video-logo .span-1,
+.video-logo .span-3 {
+    color: #4892d3;
+}
+.video-logo .span-2 {
+    color: #fb6407;
+}
+.video-logo .span-3 {
+    font-size: 0.85rem;
+}
+
+.chat-control {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 100;
+}
+
+.controls-panel {
+    background: white;
+    width: 35%;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+    overflow-y: auto;
+}
+
+.status-container {
+    font-size: 14px;
+    font-weight: 700;
+    color: #4a5568;
+}
+.status-text.status-idle {
+    color: #e53e3e;
+}
+.status-text.status-searching {
+    color: #dd6b20;
+}
+.status-text.status-connected {
+    color: #38a169;
+}
+
+/* =========================================
+   1. KEYWORDS & FAKE INPUT WRAPPER
+   ========================================= */
+.input-group {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start; /* Taki button hamesha top par rahe agar tags badhne se height badhe */
+}
+
+/* Naya container jo input jaisa dikhega */
+.fake-input-wrapper {
+    flex: 1;
+    display: flex;
+    flex-wrap: nowrap; /* 👈 Wrap ko disable kiya taaki height na badhe */
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f7fafc;
+    min-height: 44px;
+    cursor: text;
+    transition: all 0.2s;
+    overflow-x: auto; /* 👈 Horizontal scroll enable kiya */
+    white-space: nowrap; /* 👈 Ek hi line me force kiya */
+}
+
+.fake-input-wrapper:focus-within {
+    border-color: #667eea;
+    background: #fff;
+}
+
+/* Custom Scrollbar taaki input box thoda clean dikhe */
+.fake-input-wrapper::-webkit-scrollbar {
+    height: 4px; 
+}
+.fake-input-wrapper::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 4px;
+}
+
+/* Fake wrapper ke andar ka actual transparent input */
+.fake-input-wrapper input {
+    flex: 1;
+    min-width: 120px;
+    border: none;
+    outline: none;
+    padding: 4px 0;
+    font-size: 14px;
+    background: transparent;
+}
+
+/* Tags Styling */
+.keyword-tags {
+    display: flex;
+    flex-wrap: nowrap; /* 👈 Tags ko wrap hone se roka */
+    gap: 6px;
+    align-items: center;
+}
+
+.keyword-tag {
+    background: #ebf4ff;
+    color: #2b6cb0;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.keyword-tag button {
+    background: none;
+    border: none;
+    color: #2b6cb0;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-secondary {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+.action-buttons .btn {
+    flex: 1;
+    padding: 12px;
+    font-size: 15px;
+}
+.btn-start {
+    background: #48bb78;
+    color: white;
+}
+.btn-start:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+}
+.btn-stop {
+    background: #f56565;
+    color: white;
+}
+.btn-stop:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   3. CHAT SECTION & MESSAGES
+   ========================================= */
+.chat-section {
+    flex: 1;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid #e2e8f0;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto !important;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f7fafc;
+    min-height: 0;
+}
+
+.message {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.message.sender {
+    background: #667eea;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+.message.receiver {
+    background: white;
+    color: #2d3748;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* System Message (Matches wale aur Disconnect alerts yahan aayenge) */
+.message.system {
+    background: #edf2f7;
+    color: #4a5568;
+    align-self: center;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+.chat-input-panel {
+    padding: 12px;
+    border-top: 1px solid #e2e8f0;
+    background: white;
+    flex-shrink: 0;
+}
+
+/* Chat box ke niche wale message input ki original styling */
+.chat-input-panel .input-group input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+}
+
+.chat-input-panel .input-group input:focus {
+    border-color: #667eea;
+}
+
+/* 🚀 NEW: Responsive Ad Banner Wrapper (Footer ki jagah) */
+.partner-banner {
+    background: #e2e8f0;
+    border-top: 1px solid #cbd5e0;
+    text-align: center;
+    min-height: 60px; /* Do alag heights ke mix layout ke liye height halki si badhai */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0; /* Ensure banner doesn't collapse */
+    padding: 0;
+}
+
+/* Wrapper for ads alingment */
+.ad-row-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    width: 100%;
+}
+
+.partner-placeholder {
+    color: #718096;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.partner-banner iframe {
+    border: none !important;
+}
+
+/* 📱 MOBILE OPTIMIZATION: Mobile par screen tootne se bachane ke liye side ads hide ho jayenge */
+@media (max-width: 1150px) {
+    .desktop-only-ad {
+        display: none !important;
+    }
+    .ad-row-wrapper {
+        gap: 0px;
+    }
+}
+
+/* ========================================================================
+               📱 100% RESPONSIVE CSS FOR MOBILE
+               ======================================================================== */
+@media screen and (max-width: 844px) and (orientation: landscape) {
+    .main-container {
+        flex-direction: column;
+    }
+    .video-wrapper {
+        height: 100%;
+        flex: 1;
+    }
+    .video-grid {
+        flex-direction: row;
+        height: 47vh;
+        flex: none;
+        gap: 99px;
+    }
+    .chat-control {
+        display: flex;
+        flex-direction: row;
+        min-height: 20vh;
+        height: auto;
+    }
+    .controls-panel {
+        padding: 10px;
+        gap: 8px;
+        width: auto;
+    }
+    .chat-input-panel {
+        padding: 4px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+    }
+    .video-section {
+        flex: 1.2;
+        padding: 10px;
+        gap: 8px;
+        min-height: 0;
+    }
+    .video-grid {
+        flex-direction: column;
+        flex: 1;
+        gap: 8px;
+        height: auto;
+        min-height: 45vh;
+    }
+    .video-wrapper {
+        flex: 1;
+        height: auto;
+        min-height: 0;
+    }
+    .chat-control {
+        display: flex;
+        flex-direction: column;
+        flex: 1.5;
+        min-height: 0;
+        max-height: 35vh;
+        overflow: hidden;
+    }
+    .controls-panel {
+        width: 100%;
+        padding: 12px;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+    .action-buttons .btn {
+        padding: 10px;
+        font-size: 14px;
+    }
+    .chat-section {
+        flex: 1;
+        border-left: none;
+        border-top: 1px solid #e2e8f0;
+        min-height: 0;
+    }
+    .chat-messages {
+        padding: 10px;
+    }
+}
+
+
+/* CUSTOM MODAL FOR FIRST TIME VISIT */
+.custom-modal {
+    display: none; /* JS se show hoga */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+.custom-modal.show {
+    display: flex;
+}
+.modal-content {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 350px;
+}
+.modal-content h3 {
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+.modal-content p {
+    color: #718096;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+}
+.modal-buttons .btn {
+    flex: 1;
+}
+
+
+/* GENDER & COUNTRY FILTERS */
+.filters-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+/* custom wrapper */
+.filter-select {
+    width: 30%;
+        max-height: 40px;
+
+    flex: 1;
+    font-size: 1rem;
+
+    padding: 0; /* Padding hatayi hai kyunki trigger mein use ki hai */
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #4a5568;
+    background: #f7fafc;
+    outline: none;
+    cursor: pointer;
+    position: relative; /* List ko position karne ke liye zaroori hai */
+}
+.filter-select:focus,
+.filter-select:focus-within {
+    border-color: #667eea;
+}
+
+/* Custom Gender Options */
+.custom-gender-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px; /* Purani filter-select wali padding yahan lagayi hai */
+    height: 100%;
+    max-height: 40px;
+    box-sizing: border-box;
+}
+
+.custom-gender-options {
+    position: absolute;
+    display: none;
+    bottom: 100%;
+    left: -2px; /* Border ke saath align karne ke liye */
+    right: -2px;
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    margin-top: 4px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 100;
+    overflow: hidden;
+}
+
+.custom-gender-options.show {
+    display: block;
+}
+
+.custom-gender-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.custom-gender-option:hover {
+    background: #bbe0ff;
+}
+
+/* SVGs ka default color set karna */
+.custom-gender-wrapper svg {
+    color: #667eea; 
+}
+
+
+/* Country Options */
+.custom-select-wrapper {
+    position: relative;
+    width: 70%; /* Apne hisaab se width adjust karein */
+    user-select: none;
+    color: #4a5568;
+    font-weight: 600;
+}
+
+.custom-select-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: aqua;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    max-height: 40px;
+}
+
+.custom-select-trigger img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.custom-options {
+    position: absolute;
+    display: none;
+    bottom: 100%;
+    height: max-content;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 101;
+}
+
+.custom-options.open {
+    display: block;
+}
+
+.custom-option {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.custom-option:hover {
+    background: #bbe0ff;
+}
+
+/* Custom scrollbar thoda patla aur clean karne ke liye (Optional but Premium UI) */
+.custom-options::-webkit-scrollbar {
+    width: 10px;
+}
+.custom-options::-webkit-scrollbar-thumb {
+    background: #000000;
+    border-radius: 4px;
+}
+
+.custom-option img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+
+/* =========================================
+   4. CUSTOM TOAST ALERT NOTIFICATION
+   ========================================= */
+.custom-toast-alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background-color: #ff0000; /* Alert ka Lal rang */
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 900;
+    text-shadow: 0 0 5px #000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 999999; /* Sabse upar dikhega */
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    pointer-events: none; /* Mouse click ko block na kare */
+}
+
+.custom-toast-alert.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
