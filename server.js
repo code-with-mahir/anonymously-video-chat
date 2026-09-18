@@ -1,66 +1,9 @@
 require('dotenv').config({ override: true });
 
-/**
- * ============================================================================
- * TALKOYE VIDEO CHAT - SCALABLE BACKEND SERVER (Redis-backed, cluster-ready)
- * ============================================================================
- *
- * THIS REVISION fixes 4 correctness bugs found during real multi-process
- * testing. All 4 traced back to the same root cause: the previous version
- * had no way to (a) atomically claim a match without a race, and (b) detect
- * that a Redis-backed "user" was actually dead. Specifically:
- *
- *   FIX 1 - ATOMIC MATCH CLAIMING (Lua script, compare-and-swap on `status`)
- *      Previously, two processes could both "peek" the same waiting user and
- *      both decide to match with them, or a user could get matched twice
- *      (once by us, once by someone else) in the same instant. Every match
- *      now goes through claimUser(), a Lua script that atomically flips a
- *      user's status from 'searching' to 'matched' ONLY if it is still
- *      'searching' at the moment the script runs. If the flip fails, that
- *      candidate is either already taken, or dead (no hash = no match).
- *      This is what fixes ghost-matching too: a Lua HGET on a missing/expired
- *      key returns nil, which never equals 'searching', so claiming a ghost
- *      always safely fails.
- *
- *   FIX 2 - ATOMIC PARTNER RELEASE (Lua script, compare-and-swap on `roomId`)
- *      Previously, when user A left a room, the server unconditionally reset
- *      partner B's Redis state to 'idle'. If B had ALREADY auto-re-searched
- *      in that same instant (a very common race - your client auto-searches
- *      the moment it sees 'stranger-disconnected'), this clobbered B's brand
- *      new 'searching' state back to 'idle' while B's socket ID was still
- *      sitting in a waiting-pool list - a permanent zombie that nothing could
- *      ever match again. releaseIfRoomMatches() only resets a partner if
- *      their roomId still equals the room being closed; if they've already
- *      moved on, we leave their newer state alone.
- *
- *   FIX 3 - TTL-BASED PRESENCE + HEARTBEAT
- *      Previously, restarting a Node process left its users' Redis hashes
- *      and pool-list entries behind FOREVER, since nothing ever cleaned
- *      them up. Every user hash now carries a TTL (PRESENCE_TTL_SECONDS),
- *      refreshed by a periodic heartbeat for every socket a process still
- *      owns. If a process dies, its users' hashes simply expire instead of
- *      persisting as permanent ghosts.
- *
- *   FIX 4 - SELF-HEALING POOL SCANS
- *      When a candidate is peeked from a waiting-pool list but their hash
- *      no longer exists (expired/never existed), they're now opportunistically
- *      removed from that list on the spot, instead of sitting there forever
- *      as dead weight that every future search has to skip over.
- *
- * ACCEPTED LIMITATION (unchanged from before): the 60s keyword-to-random
- * fallback timer is still a local setTimeout. If the process holding it
- * restarts, that one fallback is lost - the user just remains in the pool
- * until matched or until they search again. A fully crash-safe version of
- * this would use a persistent delayed job queue (e.g. BullMQ); intentionally
- * out of scope here.
- *
- * DEPLOYMENT REQUIREMENTS (unchanged):
- *   - Redis reachable via REDIS_URL
- *   - npm install ioredis @socket.io/redis-adapter dotenv
- *   - Sticky sessions on your load balancer once you run multiple
- *     processes/machines behind one (infra config, not fixable here)
- *   - pm2 start server.js -i max --name talkoye
- * ============================================================================
+/*
+ * ========================================================================
+ *    Anonymous Video Chat - BACKEND SERVER (Redis-backed, cluster-ready)
+ * ========================================================================
  */
 
 const express = require('express');
@@ -75,7 +18,6 @@ const HOST = process.env.HOST || '0.0.0.0';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 
-// 👇 NAYI LINE YAHAN PASTE KAREIN (Ye check karegi ki URL sahi aa raha hai ya nahi)
 console.log('[REDIS CONFIG]', REDIS_URL.replace(/:[^:@]*@/, ':***@'));
 
 const app = express();
@@ -85,7 +27,7 @@ app.set('trust proxy', 1);
 
 const io = new Server(server, {
     cors: {
-        origin: ['http://localhost:3000', 'https://talkoye.com', 'https://www.talkoye.com'],
+        origin: ['http://localhost:3000', 'https://yourplaform.com', 'https://www.yourplaform.com'],
         methods: ['GET', 'POST'],
         credentials: true,
     },
@@ -114,9 +56,9 @@ subClient.on('error', (err) => console.error('[REDIS ERROR - sub client]', err.m
 
 io.adapter(createAdapter(pubClient, subClient));
 
-// ----------------------------------------------------------------------------
-// ATOMIC LUA COMMANDS (this is the core correctness fix)
-// ----------------------------------------------------------------------------
+// ------------------------------------------
+//          ATOMIC LUA COMMANDS
+// ------------------------------------------
 
 // Flips a user's status from 'searching' to 'matched' ONLY if it is still
 // 'searching' right now. Returns 1 if we won the claim, 0 if someone else
@@ -153,7 +95,7 @@ redis.defineCommand('releaseIfRoomMatches', {
 // ----------------------------------------------------------------------------
 // STATE SCHEMA (Redis)
 // ----------------------------------------------------------------------------
-//   user:{socketId}          -> HASH  (TTL'd - see PRESENCE_TTL_SECONDS)
+//   user:{socketId}           -> HASH  (TTL'd - see PRESENCE_TTL_SECONDS)
 //   room:{roomId}             -> HASH
 //   online:heartbeats         -> ZSET  (member=socketId, score=last-seen ms epoch)
 //   pool:random:{gender}      -> LIST  (FIFO waiting pool bucketed by myGender)
@@ -259,9 +201,9 @@ async function getOnlineCount() {
     return redis.zcard('online:heartbeats');
 }
 
-// ----------------------------------------------------------------------------
-// MATCHMAKING HELPERS
-// ----------------------------------------------------------------------------
+// --------------------------------------------------
+//           MATCHMAKING HELPERS
+// --------------------------------------------------
 
 function parseKeywords(keywordInput) {
     if (!keywordInput) return [];
@@ -408,7 +350,7 @@ async function findKeywordMatch(user) {
     return bestCandidate ? { partner: bestCandidate, commonKeywords: bestCommon } : null;
 }
 
-// --- THE CORE FIX: atomic two-sided claim, with rollback ---
+// --- Atomic two-sided claim, with rollback ---
 //
 // A found candidate is NOT a guaranteed match until both sides are
 // successfully flipped from 'searching' to 'matched'. If either flip fails
@@ -527,17 +469,8 @@ setInterval(async () => {
 io.on('connection', (socket) => {
     console.log(`[CONNECTED] ${socket.id}`);
 
-    // 🚨 FIX: every socket.on(...) listener below is now registered
-    // SYNCHRONOUSLY, immediately, before any Redis round trip. Previously
-    // this whole callback was `async` and did THREE sequential `await`s
-    // (saveUser, zadd, getOnlineCount) before reaching the `socket.on('search', ...)`
-    // line. Against a real network Redis (not localhost), that's tens to
-    // hundreds of milliseconds during which the socket is connected but NO
-    // listeners exist yet. Any event the client fires in that window -
-    // e.g. a client that calls socket.emit('search', ...) the instant
-    // 'connect' fires, which is exactly what load-tester.js does - is
-    // silently dropped by Socket.IO: no listener means no error, no log,
-    // nothing. That is the entire bug behind "zero matches, zero errors."
+    // Eevery socket.on(...) listener below is registered
+    // SYNCHRONOUSLY, immediately, before any Redis round trip.
     //
     // The actual Redis writes (saveUser/heartbeat/online-count) are now
     // fired in a separate async IIFE AFTER listeners are attached, so they
@@ -553,8 +486,7 @@ io.on('connection', (socket) => {
             if (!user) {
                 // Self-heal: the connect-time Redis write (see the async init
                 // IIFE below) may not have finished yet, especially against a
-                // real network Redis instance. Create the record now instead
-                // of silently dropping this search - this is what used to
+                // real network Redis instance. Create the record
                 // cause "connects fine, search never does anything, zero
                 // errors" under load.
                 user = {
@@ -610,8 +542,7 @@ io.on('connection', (socket) => {
             const parsedKeywords = parseKeywords(keywords);
 
             // Explicitly clear roomId/partnerId here - do NOT rely on stale
-            // values being overwritten later. This was the source of the
-            // "leftover partner pointer" bug.
+            // values being overwritten later.
             const updatedUser = await patchUser(socket.id, {
                 keywords: parsedKeywords,
                 status: 'searching',

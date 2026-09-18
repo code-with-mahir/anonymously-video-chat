@@ -1,5 +1,5 @@
 {
-    "name": "talkoye",
+    "name": "Anonymous Video Chat",
     "version": "1.0.0",
     "description": "Anonymous video and text chat platform with keyword matching, rate limiting, and monetization hooks",
     "main": "server.js",
