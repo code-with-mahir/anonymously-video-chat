@@ -3,7 +3,7 @@ cat << 'EOF' > README.md
 
 # 🎥 Anonymous Video Chat - Anonymous Video Chat Platform
 
-A lightweight, free, **no sign-up** anonymous video and text chat platform with **keyword-based matching system**, built with modern web technologies.
+A lightweight, **no sign-up** anonymous video and text chat platform with **keyword-based matching system**, built with modern web technologies.
 
 🌍 **Live Website:** Anonymous Video Chat.onrender.com
 
